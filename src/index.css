@@ -1,10 +1,6 @@
 @import "tailwindcss";
 
 /* 마크다운 스타일링 */
-.markdown-content {
-  max-width: none;
-}
-
 .markdown-content h1 {
   font-size: 1.5rem;
   font-weight: 700;

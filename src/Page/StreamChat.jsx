@@ -1,24 +1,19 @@
 import { GoogleGenAI } from "@google/genai";
-import { useState, useRef, useEffect } from "react";
-import ChatMessage from "./ChatMessage";
-import ChatForm from "./ChatForm";
+import { useState } from "react";
+import MessageList from "../components/MessageList";
+import ChatForm from "../components/ChatForm";
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 const chat = ai.chats.create({
   model: "gemini-2.5-flash",
 });
 
-export default function ChatContainer() {
+export default function StreamChatPage() {
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef(null);
-
-  useEffect(() => {
-    // 응답 메시지가 추가되면 최하단으로 스크롤
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
 
   // AI 응답 생성 함수
   async function generateAiResponse() {
@@ -79,23 +74,17 @@ export default function ChatContainer() {
   }
 
   return (
-    <div className="max-w-4xl h-dvh mx-auto flex flex-col border border-gray-300 ">
-      {/* 메시지 표현 컴포넌트 */}
-      <div className="flex-1 p-4 overflow-y-auto">
-        {messages.map((message, index) => (
-          <ChatMessage key={index} message={message} />
-        ))}
-        {/* 하단 스크롤 유지를 위한 빈 div */}
-        <div ref={messagesEndRef}></div>
-      </div>
+    <>
+      {/* 메시지 표현 컴포넌트 - 스크롤 가능 */}
+      <MessageList messages={messages} />
 
-      {/* 입력 폼 컴포넌트 */}
+      {/* 입력 폼 컴포넌트 - 하단 고정 */}
       <ChatForm
         prompt={prompt}
         setPrompt={setPrompt}
         onSubmit={handleSubmit}
         isLoading={isLoading}
       />
-    </div>
+    </>
   );
 }
